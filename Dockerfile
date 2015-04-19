@@ -1,14 +1,11 @@
-FROM python:slim
+FROM alpine:latest
 
 RUN \
-	export DEBIAN_FRONTEND=noninteractive && \
-	apt-get update && \
-	apt-get upgrade -y && \
-	apt-get install -y --no-install-recommends groff-base less && \
-	apt-get clean && \
-	rm /var/lib/apt/lists/*.*
+	mkdir -p /aws && \
+	apk -Uuv add groff less python py-pip && \
+	pip install awscli && \
+	apk --purge -v del py-pip && \
+	rm /var/cache/apk/*
 
-RUN pip install awscli
-
-WORKDIR /opt
+WORKDIR /aws
 ENTRYPOINT ["aws"]
